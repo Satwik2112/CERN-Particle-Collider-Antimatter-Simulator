@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CERN Particle Collider & Antimatter Research Dashboard</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="An interactive, high-fidelity physics simulator of the CERN LHC Collider and Antimatter Decelerator. Adjust parameters in real-time to analyze beam dynamics, emittance, luminosity, FODO cells, cooling mechanisms, and event reconstruction.">
+  <meta name="author" content="Antigravity Coding Assistant">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Chart.js CDN for high-performance responsive charting -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Editorial Brand Header -->
+  <header>
+    <div class="brand-label" id="cern-lbl">European Organization for Nuclear Research</div>
+    <h1 id="main-title">CERN COLLIDER & ANTIMATTER SIMULATOR</h1>
+    <p id="sub-title">A premium, interactive high-energy physics laboratory dashboard. Fine-tune accelerator properties and particle beam dynamics to model collision yields, synchrotron damping, stochastic cooling, and antihydrogen trapping in real-time.</p>
+    
+    <!-- Tab navigation -->
+    <div class="tabs-container" id="tabs-nav" role="tablist">
+      <button class="tab-btn active lhc-tab" id="btn-lhc" role="tab" aria-selected="true" aria-controls="lhc-panel">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+        LHC Collider Simulation
+      </button>
+      <button class="tab-btn antimatter-tab" id="btn-antimatter" role="tab" aria-selected="false" aria-controls="antimatter-panel">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        Antimatter Research (AD/ELENA)
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace Grid -->
+  <main class="main-wrapper" id="master-grid">
+
+    <!-- Recessed Controls Sidebar -->
+    <aside class="control-panel" id="controls-sidebar">
+      <div class="sidebar-title">
+        <span>Accelerator Controls</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </div>
+
+      <!-- LHC SIMULATION CONTROLS -->
+      <div id="lhc-controls" class="control-group-tab">
+        <!-- Section A: Particle Beam -->
+        <div class="section-group">
+          <div class="section-title">Particle Beam Properties</div>
+          
+          <div class="control-row">
+            <div class="control-label">
+              <span>Beam Energy</span>
+              <span class="control-unit" id="lbl-val-energy">7.00 TeV</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-energy" min="0.45e12" max="7.0e12" step="0.05e12" value="7.0e12">
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>Bunch Population (Np)</span>
+              <span class="control-unit" id="lbl-val-bunchpop">1.15 × 10¹¹</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-bunchpop" min="0.1e11" max="3.0e11" step="0.05e11" value="1.15e11">
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>Normalized Emittance</span>
+              <span class="control-unit" id="lbl-val-emittance">3.75 μm</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-emittance" min="1.0e-6" max="10.0e-6" step="0.25e-6" value="3.75e-6">
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>IP Focus (β*)</span>
+              <span class="control-unit" id="lbl-val-betastar">0.55 m</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-betastar" min="0.1" max="5.0" step="0.05" value="0.55">
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>Crossing Angle</span>
+              <span class="control-unit" id="lbl-val-crossing">285 μrad</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-crossing" min="0" max="600e-6" step="10e-6" value="285e-6">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section B: Acceleration RF -->
+        <div class="section-group">
+          <div class="section-title">RF Cavity System</div>
+          
+          <div class="control-row">
+            <div class="control-label">
+              <span>RF Cavity Voltage</span>
+              <span class="control-unit" id="lbl-val-rfvolt">16.0 MV</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-rfvolt" min="4e6" max="24e6" step="0.5e6" value="16e6">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section C: Collimators -->
+        <div class="section-group">
+          <div class="section-title">Collimation Scraping</div>
+          
+          <div class="control-row">
+            <div class="control-label">
+              <span>Primary Jaw Setting</span>
+              <span class="control-unit" id="lbl-val-coll-p">6.0 σ</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-coll-p" min="3.0" max="10.0" step="0.5" value="6.0">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section D: Quench protection -->
+        <div class="section-group">
+          <div class="section-title">Quench System</div>
+          
+          <div class="control-row">
+            <div class="control-label">
+              <span>Decay Resistance</span>
+              <span class="control-unit" id="lbl-val-quench-r">0.010 Ω</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-quench-r" min="0.002" max="0.05" step="0.001" value="0.01">
+            </div>
+          </div>
+        </div>
+
+        <button class="tech-btn start-sim-btn" id="btn-start-lhc" style="margin-bottom:10px; background: linear-gradient(135deg, #0033A0, #0055cc);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span>Start LHC Simulation</span>
+        </button>
+        <button class="tech-btn" id="btn-trigger-collision" style="background:#333;" disabled>
+          <span class="loader" id="collision-loader"></span>
+          <span id="collision-text">Generate PP Collision</span>
+        </button>
+      </div>
+
+      <!-- ANTIMATTER SIMULATION CONTROLS -->
+      <div id="antimatter-controls" class="control-group-tab" style="display: none;">
+        <!-- Section A: Target Yield -->
+        <div class="section-group">
+          <div class="section-title">p̄ Production Target</div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>Proton Beam Energy</span>
+              <span class="control-unit" id="lbl-val-pbar-energy">26.0 GeV</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-pbar-energy" min="5.0e9" max="30.0e9" step="0.5e9" value="26.0e9">
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>Target Material</span>
+            </div>
+            <select class="dropdown-input" id="input-pbar-mat">
+              <option value="Ir" selected>Iridium (Ir) - High Density</option>
+              <option value="W">Tungsten (W) - Refractory</option>
+              <option value="Cu">Copper (Cu) - Thermal Conductivity</option>
+            </select>
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>Target Thickness</span>
+              <span class="control-unit" id="lbl-val-pbar-thickness">10.0 cm</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-pbar-thickness" min="2.0" max="20.0" step="0.5" value="10.0">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section B: Cooling -->
+        <div class="section-group">
+          <div class="section-title">Stochastic & Electron Cooling</div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>Stochastic Bandwidth</span>
+              <span class="control-unit" id="lbl-val-cool-bw">500 MHz</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-cool-bw" min="100e6" max="1000e6" step="50e6" value="500e6">
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>Electron Current</span>
+              <span class="control-unit" id="lbl-val-ecool-current">0.50 A</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-ecool-current" min="0.05" max="2.0" step="0.05" value="0.5">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section C: Trap & Formation -->
+        <div class="section-group">
+          <div class="section-title">Antihydrogen Formation</div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>Plasma Temperature</span>
+              <span class="control-unit" id="lbl-val-hbar-temp">15.0 K</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-hbar-temp" min="2.0" max="200.0" step="1.0" value="15.0">
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <span>Ioffe Field (Bmax)</span>
+              <span class="control-unit" id="lbl-val-ioffe-field">1.00 T</span>
+            </div>
+            <div class="control-input-wrapper">
+              <input type="range" id="input-ioffe-field" min="0.2" max="3.0" step="0.05" value="1.0">
+            </div>
+          </div>
+        </div>
+
+        <button class="tech-btn start-sim-btn" id="btn-start-antimatter" style="margin-bottom:10px; background: linear-gradient(135deg, #8B0057, #c44eff);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span>Start Antimatter Simulation</span>
+        </button>
+        <button class="tech-btn" id="btn-trigger-hbar" style="background:#333;" disabled>
+          <span class="loader" id="hbar-loader"></span>
+          <span id="hbar-text">Re-Simulate Annihilations</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Content Workspace -->
+    <div class="workspace-area" id="workspace-content">
+      
+      <!-- TAB 1: LHC ACCELERATOR SIMULATOR -->
+      <section id="lhc-panel" class="tab-panel" role="tabpanel" aria-labelledby="btn-lhc">
+        <!-- Simulation Ready Overlay -->
+        <div id="lhc-start-overlay" class="sim-start-overlay">
+          <div class="sim-start-content">
+            <div class="sim-start-icon">⚛</div>
+            <h2>LHC Collider Simulation</h2>
+            <p>Configure accelerator parameters in the sidebar, then click <strong>Start LHC Simulation</strong> to initialize all 19 physics charts and particle collision models.</p>
+            <button class="tech-btn" id="btn-start-lhc-overlay" style="max-width:280px; margin:0 auto; background: linear-gradient(135deg, #0033A0, #0055cc); box-shadow: 0 8px 32px rgba(0,51,160,0.3);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Start LHC Simulation
+            </button>
+          </div>
+        </div>
+        <!-- Live Metrics Panel -->
+        <div class="summary-container" id="lhc-summary-metrics">
+          <div class="metric-box">
+            <div class="metric-label">Peak Luminosity</div>
+            <div class="metric-value" id="val-lum">1.00 × 10³⁴</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Protons / Bunch</div>
+            <div class="metric-value" id="val-np">1.15 × 10¹¹</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">IP Beam Size (σ*)</div>
+            <div class="metric-value" id="val-beamsz">16.6 μm</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Stored Energy / Beam</div>
+            <div class="metric-value" id="val-stored-e">362 MJ</div>
+          </div>
+        </div>
+
+        <!-- Dashboard Cards Grid -->
+        <div class="dashboard-grid">
+          
+          <!-- Card 1: Injector Chain -->
+          <div class="vis-card glow-blue">
+            <div class="card-header-row">
+              <div class="card-title">① CERN Injector Energy Ramp</div>
+              <div class="card-num">ACC-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-injector"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 2: FODO Cell Twiss -->
+          <div class="vis-card glow-gold">
+            <div class="card-header-row">
+              <div class="card-title">② FODO Cell Twiss Parameters</div>
+              <div class="card-num">ACC-02</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-fodo"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 3: Interactive LHC Ring -->
+          <div class="vis-card glow-blue">
+            <div class="card-header-row">
+              <div class="card-title">③ Interactive LHC Collider Layout</div>
+              <div class="card-num">MAP-01</div>
+            </div>
+            <div class="svg-panel-container">
+              <svg id="svg-lhc-ring" width="100%" height="100%" viewBox="-1.5 -1.5 3 3"></svg>
+              <div class="svg-caption">SPS Injection -> IP1 ATLAS / IP2 ALICE / IP5 CMS / IP8 LHCb</div>
+            </div>
+          </div>
+
+          <!-- Card 4: Magnet Cross Section -->
+          <div class="vis-card glow-gold">
+            <div class="card-header-row">
+              <div class="card-title">④ Twin-Bore Dipole Cross-Section</div>
+              <div class="card-num">MAG-01</div>
+            </div>
+            <div class="svg-panel-container">
+              <svg id="svg-dipole" width="100%" height="100%" viewBox="-1.2 -1.2 2.4 2.4"></svg>
+              <div class="svg-caption">NbTi superconducting coils @ 1.9 K. Bending field B = 8.33 T.</div>
+            </div>
+          </div>
+
+          <!-- Card 5: Transverse Phase Space -->
+          <div class="vis-card glow-blue">
+            <div class="card-header-row">
+              <div class="card-title">⑤ Transverse Phase-Space Ellipse</div>
+              <div class="card-num">PHS-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-phase-ellipse"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 6: Betatron Oscillations -->
+          <div class="vis-card glow-gold">
+            <div class="card-header-row">
+              <div class="card-title">⑥ Multi-Turn Betatron Oscillations</div>
+              <div class="card-num">PHS-02</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-betatron"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 7: Synchrotron Rad -->
+          <div class="vis-card glow-blue">
+            <div class="card-header-row">
+              <div class="card-title">⑦ Synchrotron Radiation U₀ vs E</div>
+              <div class="card-num">RAD-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-radiation"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 8: RF Phase space -->
+          <div class="vis-card glow-green">
+            <div class="card-header-row">
+              <div class="card-title">⑧ RF Longitudinal Phase Space</div>
+              <div class="card-num">RF-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-rf-space"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 9: Luminosity vs Energy -->
+          <div class="vis-card glow-gold">
+            <div class="card-header-row">
+              <div class="card-title">⑨ Peak Luminosity vs Beam Energy</div>
+              <div class="card-num">LUM-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-lum-energy"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 10: Luminosity vs Beta Star -->
+          <div class="vis-card glow-blue">
+            <div class="card-header-row">
+              <div class="card-title">⑩ Peak Luminosity vs β* at IP</div>
+              <div class="card-num">LUM-02</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-lum-beta"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 11: LHC Energy Ramp -->
+          <div class="vis-card glow-gold">
+            <div class="card-header-row">
+              <div class="card-title">⑪ LHC Acceleration Energy Ramp</div>
+              <div class="card-num">ACC-03</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-lhc-ramp"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 12: Quench Protection -->
+          <div class="vis-card glow-coral">
+            <div class="card-header-row">
+              <div class="card-title">⑫ Magnet Quench Current Decay</div>
+              <div class="card-num">QPN-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-quench"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 13: Beam-Beam tune shift -->
+          <div class="vis-card glow-blue">
+            <div class="card-header-row">
+              <div class="card-title">⑬ Beam–Beam Tune Shift ξ vs Nₚ</div>
+              <div class="card-num">BBE-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-beam-beam"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 14: Collimation Scraping -->
+          <div class="vis-card glow-coral">
+            <div class="card-header-row">
+              <div class="card-title">⑭ Collimation Halo Scraped Distribution</div>
+              <div class="card-num">COL-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-collimation"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 15: Parton Distribution Functions -->
+          <div class="vis-card glow-blue">
+            <div class="card-header-row">
+              <div class="card-title">⑮ Parton Distribution Functions xf(x)</div>
+              <div class="card-num">PDF-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-pdf"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 16: Z Invariant Mass Reconstructed -->
+          <div class="vis-card glow-blue">
+            <div class="card-header-row">
+              <div class="card-title">⑯ Reconstructed Z → μ⁺μ⁻ Mass</div>
+              <div class="card-num">DET-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-z-mass"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 17: Higgs diphoton mass -->
+          <div class="vis-card glow-gold">
+            <div class="card-header-row">
+              <div class="card-title">⑰ Reconstructed Higgs → γγ Mass</div>
+              <div class="card-num">DET-02</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-h-mass"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 18: Dijet pT spectrum -->
+          <div class="vis-card glow-green">
+            <div class="card-header-row">
+              <div class="card-title">⑱ Reconstructed Dijet Transverse Momentum p_T</div>
+              <div class="card-num">DET-03</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-dijet-pt"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 19: Wide Parameter Summary Table -->
+          <div class="vis-card glow-blue span-2">
+            <div class="card-header-row">
+              <div class="card-title">⑲ Comprehensive LHC Design Parameter Set</div>
+              <div class="card-num">TAB-01</div>
+            </div>
+            <div class="param-table-wrapper">
+              <table class="param-table" id="lhc-param-table">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Physics Unit</th>
+                    <th>Simulated Value</th>
+                  </tr>
+                </thead>
+                <tbody id="lhc-table-body">
+                  <!-- Generated dynamically in app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 2: ANTIMATTER RESEARCH SECTION -->
+      <section id="antimatter-panel" class="tab-panel" role="tabpanel" aria-labelledby="btn-antimatter" style="display: none;">
+        <!-- Simulation Ready Overlay -->
+        <div id="antimatter-start-overlay" class="sim-start-overlay">
+          <div class="sim-start-content">
+            <div class="sim-start-icon">p̄</div>
+            <h2>Antimatter Research Simulation</h2>
+            <p>Configure AD/ELENA parameters in the sidebar, then click <strong>Start Antimatter Simulation</strong> to run all 16 antimatter physics charts and annihilation Monte Carlo models.</p>
+            <button class="tech-btn" id="btn-start-antimatter-overlay" style="max-width:320px; margin:0 auto; background: linear-gradient(135deg, #8B0057, #c44eff); box-shadow: 0 8px 32px rgba(196,78,255,0.3);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Start Antimatter Simulation
+            </button>
+          </div>
+        </div>
+        <!-- Live Metrics Panel -->
+        <div class="summary-container" id="antimatter-summary-metrics">
+          <div class="metric-box">
+            <div class="metric-label">Capture Rate (p̄/s)</div>
+            <div class="metric-value" id="val-pbar-rate">8.50 × 10⁷</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">H̄ 3-Body Formation</div>
+            <div class="metric-value" id="val-hbar-3body">4.40 × 10⁴ s⁻¹</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Trap Depth (hyperfine)</div>
+            <div class="metric-value" id="val-trap-depth">0.058 meV</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Deceleration Efficiency</div>
+            <div class="metric-value" id="val-decel-eff">99.85%</div>
+          </div>
+        </div>
+
+        <!-- Dashboard Cards Grid -->
+        <div class="dashboard-grid">
+
+          <!-- Card 1: pbar cross section -->
+          <div class="vis-card glow-pink">
+            <div class="card-header-row">
+              <div class="card-title">① Antiproton Production Cross-Section</div>
+              <div class="card-num">ANT-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-pbar-xs"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 2: pbar target yield -->
+          <div class="vis-card glow-gold">
+            <div class="card-header-row">
+              <div class="card-title">② p̄ Capture Yield per Incident Proton</div>
+              <div class="card-num">ANT-02</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-pbar-yield"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 3: Deceleration KE -->
+          <div class="vis-card glow-pink">
+            <div class="card-header-row">
+              <div class="card-title">③ AD / ELENA Deceleration Stages (Kinetic Energy)</div>
+              <div class="card-num">ANT-03</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-pbar-chain-ke"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 4: Deceleration Brho -->
+          <div class="vis-card glow-gold">
+            <div class="card-header-row">
+              <div class="card-title">④ Beam Rigidity Bρ through Chain</div>
+              <div class="card-num">ANT-04</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-pbar-chain-br"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 5: Stochastic cooling -->
+          <div class="vis-card glow-pink">
+            <div class="card-header-row">
+              <div class="card-title">⑤ Stochastic Cooling Phase-Space Evolution</div>
+              <div class="card-num">COL-02</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-stochastic-cool"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 6: Electron cooling -->
+          <div class="vis-card glow-pink">
+            <div class="card-header-row">
+              <div class="card-title">⑥ Electron Cooling Emittance Reduction</div>
+              <div class="card-num">COL-03</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-electron-cool"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 7: Schottky Noise Spectrum -->
+          <div class="vis-card glow-pink">
+            <div class="card-header-row">
+              <div class="card-title">⑦ Longitudinal Schottky Noise Spectrum</div>
+              <div class="card-num">SCH-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-schottky"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 8: Positron source -->
+          <div class="vis-card glow-gold">
+            <div class="card-header-row">
+              <div class="card-title">⑧ Positron Source ²²Na Beta Spectrum & Activity</div>
+              <div class="card-num">POS-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-positron"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 9: Hbar formation -->
+          <div class="vis-card glow-pink">
+            <div class="card-header-row">
+              <div class="card-title">⑨ Antihydrogen Formation Rate vs T</div>
+              <div class="card-num">HBR-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-hbar-formation"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 10: Hbar quantum levels -->
+          <div class="vis-card glow-pink">
+            <div class="card-header-row">
+              <div class="card-title">⑩ principal quantum number n-distribution</div>
+              <div class="card-num">HBR-02</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-hbar-nlevel"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 11: Ioffe Pritchard B-field -->
+          <div class="vis-card glow-green">
+            <div class="card-header-row">
+              <div class="card-title">⑪ Ioffe–Pritchard Magnetic Field Trap Profile</div>
+              <div class="card-num">TRP-01</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-ioffe-field"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 12: Trapping fraction -->
+          <div class="vis-card glow-pink">
+            <div class="card-header-row">
+              <div class="card-title">⑫ Trapped Antihydrogen Fraction vs Temperature</div>
+              <div class="card-num">TRP-02</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-hbar-trapping"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 13: Annihilation Topology starburst -->
+          <div class="vis-card glow-pink">
+            <div class="card-header-row">
+              <div class="card-title">⑬ Antiproton Annihilation Track Topology</div>
+              <div class="card-num">ANH-01</div>
+            </div>
+            <div class="svg-panel-container">
+              <canvas id="canvas-starburst" width="300" height="300" style="background-color:#050810; border-radius:8px;"></canvas>
+              <div class="svg-caption">p̄ + p → π⁺ + π⁻ + π⁰ (vertex annihilation tracks)</div>
+            </div>
+          </div>
+
+          <!-- Card 14: Annihilation pion pt -->
+          <div class="vis-card glow-pink">
+            <div class="card-header-row">
+              <div class="card-title">⑭ Charged Pion Transverse Momentum p_T</div>
+              <div class="card-num">ANH-02</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-anni-pions"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 15: Neutral pion decay gamma E -->
+          <div class="vis-card glow-gold">
+            <div class="card-header-row">
+              <div class="card-title">⑮ π⁰ → γγ Annihilation Photon Energy</div>
+              <div class="card-num">ANH-03</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-anni-gamma"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 16: Annihilation vertex radial distribution -->
+          <div class="vis-card glow-green">
+            <div class="card-header-row">
+              <div class="card-title">⑯ Annihilation Vertex Displacement Radial Distribution</div>
+              <div class="card-num">ANH-04</div>
+            </div>
+            <div class="card-chart-container">
+              <canvas id="chart-anni-vertex"></canvas>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- Footnotes and references -->
+  <footer>
+    Simulation modeled strictly on CERN accelerator reports, the LHC Design Volume I, AD/ELENA technical descriptions, and nuclear physics textbooks.<br>
+    Built with the Auralis design language &copy; 2026 CERN Simulation Team.
+  </footer>
+
+  <!-- Code engines loading -->
+
+  <script src="app.js"></script>
+</body>
+</html>

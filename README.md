@@ -9,7 +9,8 @@ The simulator bridges mathematical models of accelerator optics, relativistic be
 ## 🔬 Core Physics Simulations
 
 ### 1. Large Hadron Collider (LHC) & Beam Dynamics
-*   **FODO Lattice & Betatron Tracking**: Models transverse beam focusing and tracking through alternating quadrupole configurations (FODO cells), computing phase space trajectories, tune shifts, and beam emittance growth.
+*   **FODO Lattice & Betatron Tracking**: Models transverse beam focusing and tracking through alternating quadrupole configurations (FODO cells), computing phase space trajecto
+*   ries, tune shifts, and beam emittance growth.
 *   **RF Acceleration & Cavity Cavitation**: Tracks longitudinal acceleration, phase-slip factors, and synchrotron radiation losses.
 *   **Beam-Beam Interactions**: Computes luminosity ($L$), crossing-angle reduction factors, and beam-beam tune shifts.
 *   **Collimation & Machine Protection**: Simulates primary/secondary multi-stage collimator intercepts and quench protection thresholds for superconducting magnets.
